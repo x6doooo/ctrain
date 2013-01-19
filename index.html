@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<title> ctrain.js </title>
+		<meta name="description" content="geomap" />
+		<meta name="keywords" content="svg,raphael,javascript,geojson" />
+		<meta name="author" content="yang" />
+		<script type="text/javascript" src="jslib/jquery-1.8.2.min.js"></script>
+		<script type="text/javascript" src="jslib/tuna.js"></script>
+		<script type="text/javascript" src="jslib/raphael-min.js"></script>
+		<script type="text/javascript" src="geomap.js"></script>
+	</head>
+	<body style="background:#222;">
+
+		<div id="map" style="width:900px;height:700px;overflow: hidden"></div>
+
+		<div id="timebox" style="font-size:12px; position: absolute; top:10px; left:10px; color:#fff;"></div>
+
+		<table id="train_list" style="display:none;width:300px;height:400px;background:#fff;border:0;margin-top:-400px;position:relative;z-index: 999">
+			<tr>
+				<th></th>
+				<th></th>
+				<th></th>
+				<th></th>
+				<th></th>
+			</tr>
+		</table>
+
+		<script>
+
+		(function () {
+
+			var trainJSON = {
+				"b2t": [
+					{"id": "C2001","bj": "6:30","wq": null,"tj": "7:03","tg": null},
+					{"id": "C2201","bj": "6:45","wq": "7:07","tj": "7:23","tg": null},
+					{"id": "C2151","bj": "7:00","wq": null,"tj": "7:33","tg": null},
+					{"id": "C2003","bj": "7:05","wq": null,"tj": "7:38","tg": null},
+					{"id": "C2271","bj": "7:20","wq": null,"tj": null,"tg": "8:15"},
+					{"id": "C2203","bj": "7:25","wq": "7:47","tj": "8:03","tg": null},
+					{"id": "C2005","bj": "7:35","wq": null,"tj": "8:08","tg": null},
+					{"id": "C2007","bj": "7:45","wq": null,"tj": "8:18","tg": null},
+					{"id": "C2241","bj": "7:55","wq": "8:17","tj": "8:33","tg": null},
+					{"id": "C2273","bj": "8:05","wq": null,"tj": "8:38","tg": "9:02"},
+					{"id": "C2009","bj": "8:20","wq": null,"tj": "8:53","tg": null},
+					{"id": "C2205","bj": "8:30","wq": "8:52","tj": "9:08","tg": null},
+					{"id": "C2011","bj": "8:45","wq": null,"tj": "9:18","tg": null},
+					{"id": "C2207","bj": "9:00","wq": "9:22","tj": "9:38","tg": null},
+					{"id": "C2013","bj": "9:20","wq": null,"tj": "9:53","tg": null},
+					{"id": "C2015","bj": "9:30","wq": null,"tj": "10:03","tg": null},
+					{"id": "C2017","bj": "9:40","wq": null,"tj": "10:13","tg": null},
+					{"id": "C2295","bj": "9:45","wq": null,"tj": "10:18","tg": "10:43"},
+					{"id": "C2209","bj": "9:50","wq": "10:12","tj": "10:28","tg": null},
+					{"id": "C2101","bj": "10:00","wq": null,"tj": "10:33","tg": null},
+					{"id": "C2019","bj": "10:10","wq": null,"tj": "10:43","tg": null},
+					{"id": "C2251","bj": "10:15","wq": "10:37","tj": "10:53","tg": null},
+					{"id": "C2021","bj": "10:30","wq": null,"tj": "11:03","tg": null},
+					{"id": "C2291","bj": "10:35","wq": null,"tj": "11:08","tg": "11:33"},
+					{"id": "C2023","bj": "10:40","wq": null,"tj": "11:13","tg": null},
+					{"id": "C2025","bj": "10:45","wq": null,"tj": "11:18","tg": null},
+					{"id": "C2027","bj": "10:55","wq": null,"tj": "11:28","tg": null},
+					{"id": "C2211","bj": "11:10","wq": "11:32","tj": "11:48","tg": null},
+					{"id": "C2029","bj": "11:25","wq": null,"tj": "11:58","tg": null},
+					{"id": "C2031","bj": "11:35","wq": null,"tj": "12:08","tg": null},
+					{"id": "C2275","bj": "11:45","wq": null,"tj": "12:18","tg": "12:42"},
+					{"id": "C2213","bj": "11:55","wq": "12:17","tj": "12:33","tg": null},
+					{"id": "C2033","bj": "12:20","wq": null,"tj": "12:53","tg": null},
+					{"id": "C2153","bj": "12:30","wq": null,"tj": "13:03","tg": null},
+					{"id": "C2215","bj": "12:40","wq": "13:02","tj": "13:18","tg": null},
+					{"id": "C2035","bj": "12:55","wq": null,"tj": "13:28","tg": null},
+					{"id": "C2103","bj": "13:05","wq": null,"tj": "13:38","tg": null},
+					{"id": "C2037","bj": "13:10","wq": null,"tj": "13:43","tg": null},
+					{"id": "C2039","bj": "13:15","wq": null,"tj": "13:48","tg": null},
+					{"id": "C2041","bj": "13:30","wq": null,"tj": "14:03","tg": null},
+					{"id": "C2105","bj": "13:40","wq": null,"tj": "14:13","tg": null},
+					{"id": "C2217","bj": "13:45","wq": "14:07","tj": "14:23","tg": null},
+					{"id": "C2155","bj": "14:00","wq": null,"tj": "14:33","tg": null},
+					{"id": "C2043","bj": "14:05","wq": null,"tj": "14:38","tg": null},
+					{"id": "C2045","bj": "14:15","wq": null,"tj": "14:48","tg": null},
+					{"id": "C2047","bj": "14:25","wq": null,"tj": "14:58","tg": null},
+					{"id": "C2253","bj": "14:35","wq": "14:57","tj": "15:13","tg": null},
+					{"id": "C2049","bj": "14:45","wq": null,"tj": "15:18","tg": null},
+					{"id": "C2219","bj": "14:55","wq": "15:17","tj": "15:33","tg": null},
+					{"id": "C2051","bj": "15:15","wq": null,"tj": "15:48","tg": null},
+					{"id": "C2053","bj": "15:25","wq": null,"tj": "15:58","tg": null},
+					{"id": "C2055","bj": "15:35","wq": null,"tj": "16:08","tg": null},
+					{"id": "C2057","bj": "15:50","wq": null,"tj": "16:23","tg": null},
+					{"id": "C2277","bj": "15:55","wq": null,"tj": "16:28","tg": "16:52"},
+					{"id": "C2221","bj": "16:05","wq": "16:27","tj": "16:43","tg": null},
+					{"id": "C2107","bj": "16:15","wq": null,"tj": "16:48","tg": null},
+					{"id": "C2059","bj": "16:20","wq": null,"tj": "16:53","tg": null},
+					{"id": "C2061","bj": "16:30","wq": null,"tj": "17:03","tg": null},
+					{"id": "C2243","bj": "16:40","wq": "17:02","tj": "17:18","tg": null},
+					{"id": "C2279","bj": "16:50","wq": null,"tj": "17:23","tg": "17:47"},
+					{"id": "C2223","bj": "17:00","wq": "17:22","tj": "17:38","tg": null},
+					{"id": "C2063","bj": "17:20","wq": null,"tj": "17:53","tg": null},
+					{"id": "C2157","bj": "17:25","wq": null,"tj": "17:58","tg": null},
+					{"id": "C2159","bj": "17:35","wq": null,"tj": "18:08","tg": null},
+					{"id": "C2225","bj": "17:40","wq": "18:02","tj": "18:18","tg": null},
+					{"id": "C2281","bj": "17:55","wq": null,"tj": null,"tg": "18:49"},
+					{"id": "C2227","bj": "18:05","wq": "18:27","tj": "18:43","tg": null},
+					{"id": "C2065","bj": "18:25","wq": null,"tj": "18:58","tg": null},
+					{"id": "C2067","bj": "18:35","wq": null,"tj": "19:08","tg": null},
+					{"id": "C2283","bj": "18:50","wq": null,"tj": null,"tg": "19:43"},
+					{"id": "C2069","bj": "19:05","wq": null,"tj": "19:38","tg": null},
+					{"id": "C2229","bj": "19:15","wq": "19:37","tj": "19:53","tg": null},
+					{"id": "C2109","bj": "19:30","wq": null,"tj": "20:03","tg": null},
+					{"id": "C2071","bj": "19:40","wq": null,"tj": "20:13","tg": null},
+					{"id": "C2073","bj": "19:55","wq": null,"tj": "20:28","tg": null},
+					{"id": "C2075","bj": "20:10","wq": null,"tj": "20:43","tg": null},
+					{"id": "C2293","bj": "20:20","wq": null,"tj": null,"tg": "21:13"},
+					{"id": "C2077","bj": "20:30","wq": null,"tj": "21:03","tg": null},
+					{"id": "C2079","bj": "20:40","wq": null,"tj": "21:13","tg": null},
+					{"id": "C2081","bj": "20:50","wq": null,"tj": "21:23","tg": null},
+					{"id": "C2161","bj": "20:55","wq": null,"tj": "21:28","tg": null},
+					{"id": "C2083","bj": "21:00","wq": null,"tj": "21:33","tg": null},
+					{"id": "C2231","bj": "21:15","wq": "21:37","tj": "21:53","tg": null},
+					{"id": "C2163","bj": "21:25","wq": null,"tj": "21:58","tg": null},
+					{"id": "C2085","bj": "21:30","wq": null,"tj": "22:03","tg": null},
+					{"id": "C2111","bj": "21:40","wq": null,"tj": "22:13","tg": null},
+					{"id": "C2087","bj": "21:55","wq": null,"tj": "22:28","tg": null},
+					{"id": "C2089","bj": "22:10","wq": null,"tj": "22:43","tg": null},
+					{"id": "C2091","bj": "22:25","wq": null,"tj": "22:58","tg": null},
+					{"id": "C2093","bj": "23:00","wq": null,"tj": "23:33"}
+				],
+				"t2b": [
+					{"id": "C2002","tg": null,"tj": "6:25","wq": null,"bj": "6:58"},
+					{"id": "C2202","tg": null,"tj": "6:40","wq": "6:52","bj": "7:18"},
+					{"id": "C2004","tg": null,"tj": "7:10","wq": null,"bj": "7:43"},
+					{"id": "C2204","tg": null,"tj": "7:20","wq": "7:32","bj": "7:58"},
+					{"id": "C2006","tg": null,"tj": "7:40","wq": null,"bj": "8:13"},
+					{"id": "C2008","tg": null,"tj": "7:55","wq": null,"bj": "8:28"},
+					{"id": "C2242","tg": null,"tj": "8:00","wq": "8:12","bj": "8:38"},
+					{"id": "C2010","tg": null,"tj": "8:10","wq": null,"bj": "8:43"},
+					{"id": "C2152","tg": null,"tj": "8:20","wq": null,"bj": "8:53"},
+					{"id": "C2206","tg": null,"tj": "8:25","wq": "8:37","bj": "9:03"},
+					{"id": "C2012","tg": null,"tj": "8:40","wq": null,"bj": "9:13"},
+					{"id": "C2014","tg": null,"tj": "8:45","wq": null,"bj": "9:18"},
+					{"id": "C2252","tg": null,"tj": "8:50","wq": "9:02","bj": "9:28"},
+					{"id": "C2272","tg": "8:38","tj": null,"wq": null,"bj": "9:33"},
+					{"id": "C2102","tg": null,"tj": "9:05","wq": null,"bj": "9:38"},
+					{"id": "C2016","tg": null,"tj": "9:10","wq": null,"bj": "9:43"},
+					{"id": "C2208","tg": null,"tj": "9:25","wq": "9:37","bj": "10:03"},
+					{"id": "C2018","tg": null,"tj": "9:35","wq": null,"bj": "10:08"},
+					{"id": "C2274","tg": "9:24","tj": "9:50","wq": null,"bj": "10:23"},
+					{"id": "C2020","tg": null,"tj": "9:55","wq": null,"bj": "10:28"},
+					{"id": "C2210","tg": null,"tj": "10:10","wq": "10:22","bj": "10:48"},
+					{"id": "C2022","tg": null,"tj": "10:20","wq": null,"bj": "10:53"},
+					{"id": "C2024","tg": null,"tj": "10:35","wq": null,"bj": "11:08"},
+					{"id": "C2212","tg": null,"tj": "10:45","wq": "10:57","bj": "11:23"},
+					{"id": "C2026","tg": null,"tj": "11:00","wq": null,"bj": "11:33"},
+					{"id": "C2104","tg": null,"tj": "11:20","wq": null,"bj": "11:53"},
+					{"id": "C2028","tg": null,"tj": "11:25","wq": null,"bj": "11:58"},
+					{"id": "C2214","tg": null,"tj": "11:30","wq": "11:42","bj": "12:08"},
+					{"id": "C2296","tg": "11:14","tj": "11:40","wq": null,"bj": "12:13"},
+					{"id": "C2030","tg": null,"tj": "11:50","wq": null,"bj": "12:23"},
+					{"id": "C2032","tg": null,"tj": "12:00","wq": null,"bj": "12:33"},
+					{"id": "C2254","tg": null,"tj": "12:05","wq": "12:17","bj": "12:43"},
+					{"id": "C2034","tg": null,"tj": "12:20","wq": null,"bj": "12:53"},
+					{"id": "C2036","tg": null,"tj": "12:25","wq": null,"bj": "12:58"},
+					{"id": "C2292","tg": "12:04","tj": "12:30","wq": null,"bj": "13:03"},
+					{"id": "C2216","tg": null,"tj": "12:45","wq": "12:57","bj": "13:23"},
+					{"id": "C2038","tg": null,"tj": "13:10","wq": null,"bj": "13:43"},
+					{"id": "C2154","tg": null,"tj": "13:20","wq": null,"bj": "13:53"},
+					{"id": "C2040","tg": null,"tj": "13:25","wq": null,"bj": "13:58"},
+					{"id": "C2276","tg": "13:04","tj": "13:30","wq": null,"bj": "14:03"},
+					{"id": "C2042","tg": null,"tj": "13:50","wq": null,"bj": "14:23"},
+					{"id": "C2044","tg": null,"tj": "14:05","wq": null,"bj": "14:38"},
+					{"id": "C2046","tg": null,"tj": "14:10","wq": null,"bj": "14:43"},
+					{"id": "C2218","tg": null,"tj": "14:25","wq": "14:37","bj": "15:03"},
+					{"id": "C2106","tg": null,"tj": "14:35","wq": null,"bj": "15:08"},
+					{"id": "C2048","tg": null,"tj": "14:40","wq": null,"bj": "15:13"},
+					{"id": "C2050","tg": null,"tj": "14:50","wq": null,"bj": "15:23"},
+					{"id": "C2052","tg": null,"tj": "15:00","wq": null,"bj": "15:33"},
+					{"id": "C2054","tg": null,"tj": "15:10","wq": null,"bj": "15:43"},
+					{"id": "C2056","tg": null,"tj": "15:15","wq": null,"bj": "15:48"},
+					{"id": "C2108","tg": null,"tj": "15:20","wq": null,"bj": "15:53"},
+					{"id": "C2220","tg": null,"tj": "15:35","wq": "15:47","bj": "16:13"},
+					{"id": "C2156","tg": null,"tj": "15:50","wq": null,"bj": "16:23"},
+					{"id": "C2058","tg": null,"tj": "15:55","wq": null,"bj": "16:28"},
+					{"id": "C2060","tg": null,"tj": "16:05","wq": null,"bj": "16:38"},
+					{"id": "C2062","tg": null,"tj": "16:15","wq": null,"bj": "16:48"},
+					{"id": "C2222","tg": null,"tj": "16:30","wq": "16:42","bj": "17:08"},
+					{"id": "C2158","tg": null,"tj": "16:40","wq": null,"bj": "17:13"},
+					{"id": "C2064","tg": null,"tj": "16:45","wq": null,"bj": "17:18"},
+					{"id": "C2224","tg": null,"tj": "17:05","wq": "17:17","bj": "17:43"},
+					{"id": "C2066","tg": null,"tj": "17:25","wq": null,"bj": "17:58"},
+					{"id": "C2226","tg": null,"tj": "17:35","wq": "17:47","bj": "18:13"},
+					{"id": "C2278","tg": "17:23","tj": null,"wq": null,"bj": "18:18"},
+					{"id": "C2110","tg": null,"tj": "17:50","wq": null,"bj": "18:23"},
+					{"id": "C2228","tg": null,"tj": "18:00","wq": "18:12","bj": "18:38"},
+					{"id": "C2068","tg": null,"tj": "18:15","wq": null,"bj": "18:48"},
+					{"id": "C2244","tg": null,"tj": "18:30","wq": "18:42","bj": "19:08"},
+					{"id": "C2280","tg": "18:23","tj": null,"wq": null,"bj": "19:18"},
+					{"id": "C2230","tg": null,"tj": "18:50","wq": "19:02","bj": "19:28"},
+					{"id": "C2160","tg": null,"tj": "19:00","wq": null,"bj": "19:33"},
+					{"id": "C2070","tg": null,"tj": "19:10","wq": null,"bj": "19:43"},
+					{"id": "C2162","tg": null,"tj": "19:25","wq": null,"bj": "19:58"},
+					{"id": "C2072","tg": null,"tj": "19:30","wq": null,"bj": "20:03"},
+					{"id": "C2074","tg": null,"tj": "19:40","wq": null,"bj": "20:13"},
+					{"id": "C2282","tg": "19:29","tj": "19:55","wq": null,"bj": "20:28"},
+					{"id": "C2076","tg": null,"tj": "20:05","wq": null,"bj": "20:38"},
+					{"id": "C2078","tg": null,"tj": "20:15","wq": null,"bj": "20:48"},
+					{"id": "C2112","tg": null,"tj": "20:20","wq": null,"bj": "20:53"},
+					{"id": "C2232","tg": null,"tj": "20:30","wq": "20:42","bj": "21:08"},
+					{"id": "C2284","tg": "20:14","tj": "20:40","wq": null,"bj": "21:13"},
+					{"id": "C2080","tg": null,"tj": "20:55","wq": null,"bj": "21:28"},
+					{"id": "C2082","tg": null,"tj": "21:05","wq": null,"bj": "21:38"},
+					{"id": "C2084","tg": null,"tj": "21:20","wq": null,"bj": "21:53"},
+					{"id": "C2086","tg": null,"tj": "21:35","wq": null,"bj": "22:08"},
+					{"id": "C2088","tg": null,"tj": "21:50","wq": null,"bj": "22:23"},
+					{"id": "C2090","tg": null,"tj": "22:00","wq": null,"bj": "22:33"},
+					{"id": "C2164","tg": null,"tj": "22:10","wq": null,"bj": "22:43"},
+					{"id": "C2092","tg": null,"tj": "22:15","wq": null,"bj": "22:48"},
+					{"id": "C2294","tg": "21:54","tj": "22:20","wq": null,"bj": "22:53"},
+					{"id": "C2094","tg": null,"tj": "22:45","wq": null,"bj": "23:18"}]
+			}
+
+			var trainData = {};
+
+			var ps = [
+					{x:116.379, y:39.86},	// bj
+					{x:117.016, y:39.371},	// wq
+					{x:117.209, y:39.135},	// tj
+					{x:117.641, y:39.027}	// tg
+				],
+				map = GeoMap.create('#map', 1000, 800),
+				config = {
+					srcPath: 'bt.json',
+					scale: {
+						x: 560,
+						y: 600
+					},
+					translate:{
+						x: -0.76,
+						y: -1.07
+					},
+					style: {
+						'fill': '#222',
+						'stroke': '#666'
+					}
+				};
+
+			formateSrcData(trainJSON.b2t, 'bj');
+			formateSrcData(trainJSON.t2b, 'tj');
+
+			console.log(trainData['C2271']);
+
+			// b2t   wq+22 tj+16
+			// t2b   tj+26 wq+12
+			function formateSrcData(data, type){
+				function formateTime(t){
+					t = t.split(':');
+					t = t[0] * 3600000 + t[1] * 60000;
+					return t;
+				}
+				data.forEach(function(v, i, a){
+					var f_bj = formateTime(v.bj),
+						f_wq, f_tj, f_tg;
+					if(type == 'bj'){
+						v.wq == null ? f_wq = f_bj + 22 * 60000 : f_wq = formateTime(v.wq);
+						v.tj == null ? f_tj = f_wq + 16 * 60000 : f_tj = formateTime(v.tj);
+						v.tg == null ? f_tg = null : f_tg = formateTime(v.tg);
+					}else{
+						v.tg == null ? f_tg = null : f_tg = formateTime(v.tg);
+						v.tj == null ? f_tj = f_tg + 26 * 60000 : f_tj = formateTime(v.tj);
+						v.wq == null ? f_wq = f_tj + 12 * 60000 : f_wq = formateTime(v.wq);
+					}
+					trainData[v.id] = {
+						bj: f_bj,
+						wq: f_wq,
+						tj: f_tj,
+						tg: f_tg
+					};
+				});
+			}
+
+			map.render(config, function () {
+				var citys = {},
+					cityColor = '#eee',
+					schedule = [],
+					aniSrcGroup = {},
+					hasrun = {},
+					now = new Date(),
+					step = 1000,    //5 * 60 * 1000;
+					timeBox = document.getElementById('timebox'),
+					key, tem, hours;
+
+				ps.forEach(function (v, k, arr) {
+					var p = map.setPoint({
+						'x': v.x,
+						'y': v.y,
+						'r': 4,
+						'fill': '#222',
+						'stroke': cityColor,
+						'stroke-width': 1,
+						'opacity': 1}),
+					n = ['bj','wq','tj','tg'];
+					citys[n[k]] = p;
+				});
+				for(key in citys){
+					tem = {bj:'北京南站', tj:'天津站', wq:'武清站', tg:'塘沽站'};
+					map.canvas.text(citys[key].attr('cx'), citys[key].attr('cy') + 15, tem[key]).attr({fill:'#999'});
+				}
+				$.each(trainData, function (k, v) {
+					var min = 24 * 60 * 60 * 1000,
+						max = 0,
+						o = {},
+						i,
+						t = [];
+					for(i in v){
+						if(v[i] !== null){
+							if(v[i] < min){
+								min = v[i];
+							}
+							if(v[i] > max){
+								max = v[i];
+							}
+							t.push({
+								id: k,
+								x: citys[i].attr('cx'),
+								y: citys[i].attr('cy'),
+								time: v[i]
+							});
+						}
+					}
+					aniSrcGroup[k] = t;
+					o.stime = min;
+					o.etime = max;
+					o.id = k;
+					schedule.push(o);
+				});
+
+				schedule.sort(function(a, b){
+					return a.time - b.time;
+				});
+
+				hours = (now.getUTCHours() + 8 > 24 ? now.getUTCHours() + 8 - 24 : now.getUTCHours() + 8);
+
+				now  = (hours * 60 * 60 + now.getUTCMinutes() * 60 + now.getUTCSeconds()) * 1000;
+
+				controlCenter();
+
+				setInterval(controlCenter, step);
+
+				function controlCenter(){
+					now += step;
+					timeBox.innerHTML = '北京时间 ' + UTCToLocalTimeString(new Date(),'yyyy/MM/dd hh:mm:ss');
+					schedule.forEach(function(val, idx, arr){
+						if(val.stime <= now && val.etime > now && !hasrun[val.id]){
+							trainAnimate(aniSrcGroup[val.id], now, val.id);
+							hasrun[val.id] = true;
+						}
+					});
+				}
+
+				function trainAnimate(train, start, id){
+					var i = 0,
+						x,
+						y,
+						t,
+						infox,
+						info,
+						set;
+
+					train.sort(function(a, b){
+						return a.time - b.time;}
+					);
+
+					train.forEach(function(val, idx, arr){
+						if(val.time > start){
+							i += 1;
+						}
+					});
+					i = train.length - i - 1;
+					x = train[i].x + (train[i].x - train[i+1].x)/(train[i].time - train[i+1].time)*(start - train[i].time);
+					y = train[i].y + (train[i].y - train[i+1].y)/(train[i].time - train[i+1].time)*(start - train[i].time);
+					t = map.canvas.circle(x, y, 4).attr({
+						fill: 'yellow'}
+					);
+					train[i].id.charAt(train[i].id.length-1) % 2 == 1 ? infox = -20 : infox = 20;
+					info = map.canvas.text(x+infox, y, id).attr({fill:'#fff'});
+					i += 1;
+					set = map.canvas.set();
+					set.push(t, info);
+					move(i, start);
+					function move(i, s){
+						set.animate({
+							cx: train[i].x,
+							cy: train[i].y,
+							x: train[i].x + infox,
+							y: train[i].y
+						}, (train[i].time - s)/1, function(){
+							i += 1;
+							if(i < train.length){
+								move(i, train[i-1].time);
+							}else{
+								set.remove();
+							}
+						});
+					}
+				}
+			});
+
+			Date.prototype.strftime = function(format){
+				var o = {
+					"M+" :  this.getMonth()+1,  //month
+					"d+" :  this.getDate(),     //day
+					"h+" :  this.getHours(),    //hour
+					"m+" :  this.getMinutes(),  //minute
+					"s+" :  this.getSeconds(), //second
+					"q+" :  Math.floor((this.getMonth()+3)/3),  //quarter
+					"S"  :  this.getMilliseconds() //millisecond
+				};
+				if(/(y+)/.test(format)) {
+					format = format.replace(RegExp.$1, (this.getFullYear()+"").substr(4 - RegExp.$1.length));
+				}
+
+				for(var k in o) {
+					if(new RegExp("("+ k +")").test(format)) {
+						format = format.replace(RegExp.$1, RegExp.$1.length==1 ? o[k] : ("00"+ o[k]).substr((""+ o[k]).length));}
+				}
+				return format;
+			}
+
+			function UTCToLocalTimeString(d, format) {
+				var timeOffsetInHours = (new Date().getTimezoneOffset()/60) +8;
+				d.setHours(d.getHours() + timeOffsetInHours);
+				return d.strftime(format);
+			}
+
+
+		})();
+
+		</script>
+
+	</body>
+</html>
+
