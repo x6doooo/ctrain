@@ -1,4 +1,7 @@
 #京津城际可视化项目
+
+Demo: <http://xbingoz.com/demo/ctrain/>
+
 ##目录结构
 	jslib/			// 类库目录
 	index.html		// 展示页面
